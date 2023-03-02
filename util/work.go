@@ -7,11 +7,13 @@ import (
 )
 
 type Worker struct {
-	work <-chan model.Work
-	wg   *sync.WaitGroup
+	work     <-chan model.Work // receive only channel
+	wg       *sync.WaitGroup
+	workFunc func(model.Work)
 }
 
-func (w Worker) Process(model.Work) {
+func (w Worker) Process(work model.Work) {
+	w.workFunc(work)
 	w.wg.Done()
 }
 
@@ -22,44 +24,39 @@ func (w Worker) Start() {
 }
 
 type WorkMill struct {
-	workers  []Worker
-	workChan chan<- model.Work
-	wg       *sync.WaitGroup
+	count    int
+	workFunc func(model.Work)
 }
 
-func NewWorkMill(n int) *WorkMill {
-	workers := make([]Worker, n)
-	workChan := make(chan model.Work, n)
-
-	var wg sync.WaitGroup
-
-	for i := 0; i <= n; i++ {
-		workers[i] = Worker{
-			work: workChan,
-			wg:   &wg,
-		}
-	}
-
+func NewWorkMill(count int, workFunc func(model.Work)) *WorkMill {
 	return &WorkMill{
-		workers:  workers,
-		workChan: workChan,
-		wg:       &wg,
+		count:    count,
+		workFunc: workFunc,
 	}
 }
 
 func (wm *WorkMill) Process(totalWork []model.Work) {
+	// create new work channel
+	workChan := make(chan model.Work)
+	// create new wait group
 	var wg sync.WaitGroup
 
-	for _, worker := range wm.workers {
-		go worker.Start()
+	// start wm.count worker processing async
+	for i := 0; i < wm.count; i++ {
+		w := Worker{
+			work:     workChan,
+			wg:       &wg,
+			workFunc: wm.workFunc,
+		}
+		go w.Start()
 	}
 
 	for _, work := range totalWork {
 		wg.Add(1)
-		wm.workChan <- work
+		workChan <- work // buffered channel does not block
 	}
 
-	wg.Wait() //needed for final n jobs to finish
-
+	wg.Wait()       // needed for final n jobs to finish
+	close(workChan) // lets go funcs exit from range and return
 	return
 }
