@@ -8,8 +8,8 @@ import (
 
 type Worker struct {
 	work     <-chan model.Work // receive only channel
-	wg       *sync.WaitGroup
-	workFunc func(model.Work)
+	wg       *sync.WaitGroup   // to parallel count work done and in progress
+	workFunc func(model.Work)  // a generic work function
 }
 
 func (w Worker) Process(work model.Work) {
@@ -18,6 +18,7 @@ func (w Worker) Process(work model.Work) {
 }
 
 func (w Worker) Start() {
+	// will block until work added, then proceed until channel closed
 	for work := range w.work {
 		w.Process(work)
 	}
@@ -36,12 +37,12 @@ func NewWorkMill(count int, workFunc func(model.Work)) *WorkMill {
 }
 
 func (wm *WorkMill) Process(totalWork []model.Work) {
-	// create new work channel
+	// create new work channel for this process
 	workChan := make(chan model.Work)
-	// create new wait group
+	// create new wait group for this process
 	var wg sync.WaitGroup
 
-	// start wm.count worker processing async
+	// start wm.count workers processing async
 	for i := 0; i < wm.count; i++ {
 		w := Worker{
 			work:     workChan,
