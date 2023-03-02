@@ -27,10 +27,12 @@ func init() {
 	// simple service
 	rCfg = repo.MyRepoCfg{}
 	r := repo.NewMyRepo(rCfg)
+	or := repo.NewMyRepo(rCfg)
 
 	sCfg = service.MySvcCfg{
-		Name:     "serviceName",
-		ThisRepo: r,
+		Name:          "serviceName",
+		ThisRepo:      r,
+		ThisOtherRepo: or,
 	}
 	s = service.NewMySvc(sCfg)
 

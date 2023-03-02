@@ -11,6 +11,11 @@ type ThatRepo interface {
 	Put(item model.Thing) (*model.Thing, error)
 	Delete(ID int) error
 }
+
+type ThatOtherRepo interface {
+	ThatRepo
+}
+
 type ThatCompoundRepo interface {
 	Get(ctx context.Context, ID int) (model.Thing, error)
 	Put(ctx context.Context, item model.Thing) (model.Thing, error)

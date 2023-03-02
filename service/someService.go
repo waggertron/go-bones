@@ -8,14 +8,16 @@ import (
 )
 
 type MySvcCfg struct {
-	Name     string
-	ThisRepo inter.ThatRepo
-	Ctx      context.Context
+	Name          string
+	ThisRepo      inter.ThatRepo
+	ThisOtherRepo inter.ThatRepo
+	Ctx           context.Context
 }
 
 type MySvc struct {
 	name string
 	r    inter.ThatRepo
+	or   inter.ThatRepo
 }
 
 func NewMySvc(c MySvcCfg) *MySvc {
