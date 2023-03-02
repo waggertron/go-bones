@@ -22,7 +22,7 @@ func NewMyRepo(c MyRepoCfg) *MyRepo {
 	return &r
 }
 
-func (r *MyRepo) Get(id int) (*model.Thing, error) {
+func (r *MyRepo) Get(ID int) (*model.Thing, error) {
 	t := model.Thing{}
 	return &t, nil
 }
@@ -32,6 +32,6 @@ func (r *MyRepo) Put(updatedItem model.Thing) (*model.Thing, error) {
 	return &finalItem, nil
 }
 
-func (r *MyRepo) Delete(id int) error {
+func (r *MyRepo) Delete(ID int) error {
 	return nil
 }

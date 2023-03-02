@@ -27,8 +27,8 @@ func NewMySvc(c MySvcCfg) *MySvc {
 	return &s
 }
 
-func (s *MySvc) Get(ctx context.Context, id int) (model.Thing, error) {
-	item, err := s.r.Get(id)
+func (s *MySvc) Get(ctx context.Context, ID int) (model.Thing, error) {
+	item, err := s.r.Get(ID)
 	if err != nil {
 		return model.Thing{}, model.NewGetError(err)
 	}
@@ -45,8 +45,8 @@ func (s *MySvc) Put(ctx context.Context, updatedItem model.Thing) (model.Thing, 
 	return *finalItem, nil
 }
 
-func (s *MySvc) Delete(ctx context.Context, id int) error {
-	err := s.r.Delete(id)
+func (s *MySvc) Delete(ctx context.Context, ID int) error {
+	err := s.r.Delete(ID)
 	if err != nil {
 		return model.NewDeleteError(err)
 	}

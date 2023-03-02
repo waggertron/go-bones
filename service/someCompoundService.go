@@ -27,7 +27,7 @@ func NewMyCompoundSvc(c MyCompoundSvcCfg) *MyCompoundSvc {
 	return &s
 }
 
-func (s *MyCompoundSvc) Get(ctx context.Context, id int) (model.Thing, error) {
+func (s *MyCompoundSvc) Get(ctx context.Context, ID int) (model.Thing, error) {
 	t := model.Thing{}
 	return t, nil
 }
@@ -37,6 +37,6 @@ func (s *MyCompoundSvc) Put(ctx context.Context, updatedItem model.Thing) (model
 	return t, nil
 }
 
-func (s *MyCompoundSvc) Delete(ctx context.Context, id int) error {
+func (s *MyCompoundSvc) Delete(ctx context.Context, ID int) error {
 	return nil
 }
