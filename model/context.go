@@ -5,7 +5,7 @@ import (
 	"errors"
 )
 
-const ourContextKey = "OUR_CONTEXT_VALUE"
+var ourContextKey = struct{}{} // always will be unique with empty struct, and not exported so GetOurValues will be necessary to call it
 
 type OurContext struct {
 	context.Context
