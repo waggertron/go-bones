@@ -1,5 +1,7 @@
 package util
 
+// do not communicate by sharing memory, share memory by communicating
+
 import (
 	"sync"
 
@@ -19,7 +21,7 @@ func (w Worker) Process(work model.Work) {
 
 func (w Worker) Start() {
 	// will block until work added, then proceed until channel closed
-	for work := range w.work {
+	for work := range w.work { // blocks until work is added into the channel, when all work is exhuasted, blocks until channel closure 
 		w.Process(work)
 	}
 }
@@ -39,7 +41,7 @@ func NewWorkMill(count int, workFunc func(model.Work)) *WorkMill {
 func (wm *WorkMill) Process(totalWork []model.Work) {
 	// create new work channel for this process
 	workChan := make(chan model.Work)
-	// create new wait group for this process
+	// create new wait group for this process, for each item of work, add to the wait group
 	var wg sync.WaitGroup
 
 	// start wm.count workers processing async
@@ -49,15 +51,15 @@ func (wm *WorkMill) Process(totalWork []model.Work) {
 			wg:       &wg,
 			workFunc: wm.workFunc,
 		}
-		go w.Start()
+		go w.Start() // intiates worker processing, but does not block the main thread
 	}
 
 	for _, work := range totalWork {
 		wg.Add(1)
-		workChan <- work // buffered channel does not block
+		workChan <- work // blocks until worker recieves 
 	}
 
-	wg.Wait()       // needed for final n jobs to finish
+	wg.Wait()
 	close(workChan) // lets go funcs exit from range and return
 	return
 }
